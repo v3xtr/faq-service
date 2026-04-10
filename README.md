@@ -12,19 +12,17 @@ A high-performance Knowledge Base and FAQ management microservice designed for t
 ## 🛠 Functional Features
 
 ### 1. Knowledge Base Management
-* **Hierarchical Categorization**: Organizes support content into logical sections (e.g., Billing, Account Security, Flight Search).
-* **Rich Text Support**: Full support for Markdown/HTML content to deliver detailed technical guides and documentation.
-* **SEO-Optimized**: Automatic generation of unique, human-readable `slugs` for enhanced indexing.
+* **Content Creation**: Dedicated endpoints for structured question and answer submission.
+* **Rich Text Support**: Full support for Markdown/HTML content to deliver detailed technical guides.
+* **Smart Retrieval**: Integrated search functionality to fetch all entries or filter by specific queries.
 
-### 2. Search & Intelligence
-* **Full-text Search**: High-speed retrieval using PostgreSQL GIN indexes, allowing users to find answers across large datasets instantly.
-* **Feedback System**: Integrated "Was this helpful?" rating system to measure content effectiveness.
-* **Analytics**: Tracking view counts and popular queries to drive data-informed content updates.
+### 2. Intelligence & Search
+* **Full-text Search**: High-speed retrieval using PostgreSQL, allowing users to find answers across datasets instantly.
+* **Flexible Querying**: Support for optional search parameters to narrow down results.
 
-### 3. Media & Cloud Storage
-* **S3 Integration**: Native integration with S3-compatible storage (Beget/AWS) for managing diagrams and instructional media.
-* **Path Management Logic**: Robust logic for automated file path formatting (e.g., `/products/`, `/faq/` prefixes).
-* **Secure Access**: Implementation of time-limited Presigned URLs for secure asset delivery.
+### 3. Reliability & Validation
+* **Strict Typing**: Leveraging Java's type system and UUIDs for robust data integrity.
+* **Input Validation**: Utilizing `@Valid` and JSR-303 annotations to ensure data quality before persistence.
 
 ---
 
@@ -33,18 +31,16 @@ A high-performance Knowledge Base and FAQ management microservice designed for t
 * **Language:** Java 21 (LTS)
 * **Framework:** Spring Boot 3.x
 * **Data Layer:** Spring Data JPA & PostgreSQL
-* **Migrations:** Flyway (Version control for database schema)
-* **Messaging:** RabbitMQ (Event-driven processing for `user.created` events to provide predictive assistance)
-* **Security:** Spring Security with RBAC (Role-Based Access Control)
+* **Security:** Spring Security & Jakarta Validation
+* **Logging:** SLF4J with Lombok integration
 
 ---
 
 ## 🚀 Architectural Principles
 
-* **Clean Architecture**: Strict separation of concerns across Web, Service, and Repository layers.
-* **DTO Pattern**: Decoupling of persistence models from API contracts to ensure backward compatibility.
-* **Global Exception Handling**: Centralized error management via `@ControllerAdvice` for standardized API error responses.
-* **Resilience Patterns**: Configured Retry Policies and Dead Letter Queues (DLQ) to ensure robust message processing during downstream failures.
+* **Clean Architecture**: Strict separation of concerns across Delivery (HTTP), Application (Service), and Internal (Domain) layers.
+* **DTO Pattern**: Utilization of specialized Data Transfer Objects to decouple API contracts from database schemas.
+* **Error Handling**: Granular exception mapping (e.g., handling `IllegalArgumentException` for malformed UUIDs).
 
 ---
 
@@ -52,10 +48,9 @@ A high-performance Knowledge Base and FAQ management microservice designed for t
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/api/v1/faq` | Retrieve all categories and trending questions |
-| `GET` | `/api/v1/faq/{slug}` | Fetch detailed article content |
-| `GET` | `/api/v1/faq/search` | Execute full-text search across the KB |
-| `POST` | `/api/v1/admin/faq` | Create new article (Admin only) |
+| `GET` | `/api/faq` | Fetch all FAQ entries (optional `search` param) |
+| `POST` | `/api/faq/question` | Create a new question entry |
+| `POST` | `/api/faq/answer` | Bind a new answer to an existing question ID |
 
 ---
 
