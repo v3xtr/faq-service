@@ -1,0 +1,61 @@
+1. Подготовка системы (Ubuntu)
+
+Обновите пакеты и установите Docker:
+
+sudo apt update && sudo apt install docker.io docker-compose -y
+
+2. Настройка базы данных (Docker)
+
+Создайте файл docker-compose.yml и отредактируйте параметры под свои нужды:
+
+    POSTGRES_DB: Название базы.
+
+    POSTGRES_USER / PASSWORD: Данные для доступа.
+
+    Ports: По умолчанию 5432:5432.
+
+Запуск:
+
+sudo docker-compose up -d
+
+3. Перенос и настройка приложения
+
+    Скопируйте файл faq-0.0.1-SNAPSHOT.jar на сервер (например, в /root/).
+
+    Создайте или скопируйте конфигурацию сервиса: sudo nano /etc/systemd/system/faq.service.
+
+    Укажите актуальные данные в блоке Environment (ссылка на БД, логин, пароль) и проверьте путь в ExecStart.
+
+    Пример faq.service
+
+        [Unit]
+        Description=FAQ Backend Service
+        After=syslog.target network.target postgresql.service
+
+        [Service]
+        User=root
+        ExecStart=/usr/bin/java -Xmx512M -jar /root/faq-0.0.1-SNAPSHOT.jar
+        SuccessExitStatus=143
+        Restart=always
+        RestartSec=10
+
+        [Install]
+        WantedBy=multi-user.target
+
+4. Выдача исполняемых прав
+
+chmod +x /path/to/file/faq-0.0.1-SNAPSHOT.jar
+
+5. Запуск сервиса
+
+sudo systemctl daemon-reload
+sudo systemctl enable faq
+sudo systemctl start faq
+
+6. Документация
+
+После запуска API Swagger доступен по адресу:
+http://SERVER_IP:PORT/swagger-ui/index.html (или /swagger-ui.html)
+На сервере на который я заливал такая ссылка: http://77.232.132.223:8000/swagger-ui/index.html
+login:admin
+password:123
