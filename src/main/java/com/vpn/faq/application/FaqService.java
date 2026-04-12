@@ -35,7 +35,7 @@ public class FaqService implements IFaqService {
 
         AnswerEntity answer = new AnswerEntity();
         answer.setText(answerText);
-        answer.setQuestion(question); // Исправил опечатку setQustion -> setQuestion
+        answer.setQuestion(question);
 
         return answerRepository.save(answer);
     }
